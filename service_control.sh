@@ -9,7 +9,12 @@ function check_service()
 		echo "$1 started"
 	fi
 }
-#function start_service()
+function nmqproxy_control()
+{
+	cd /home/work/nmq/nmqproxy/bin
+	echo $1
+	sh nmqproxy_control.sh $1
+}
 #function stop_service()
 function check_all()
 {
@@ -32,6 +37,9 @@ if [ -n $1 ]; then
 			;;
 		"lighttpd")
 			check_service lighttpd
+			;;
+		"start")
+			nmqproxy_control   starting
 			;;	
 		*)
 			help
