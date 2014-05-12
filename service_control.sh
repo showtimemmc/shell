@@ -16,21 +16,21 @@ function nmqproxy_control()
 {
 	cd /home/work/nmq/nmqproxy/bin
 	echo $1
-	sh nmqproxy_control.sh $1
+	sh nmqproxy_control $1
 }
 #params: start|stop
 function pusher_control()
 {
 	cd /home/work/nmq/pusher/bin
 	echo $1
-	sh pusher_control.sh $1
+	sh pusher_control $1
 }
 #params: start|stop
 function topic_control()
 {
 	cd /home/work/nmq/topic/bin
 	echo $1
-	sh topic_control.sh $1
+	sh topic_control $1
 }
 #params: start|stop
 function nginx_control()
@@ -52,8 +52,8 @@ function lighttpd_control()
 #params: start|stop
 function php_control()
 {
-	cd /home/work/orp/php/phplib/sbin
-	sh php-fpm start
+	cd /home/work/orp/php/sbin
+	sh php-fpm $1
 }
 function check_all()
 {
@@ -73,7 +73,7 @@ function control_all()
 
 function help()
 {
-	echo   "usage{check|start|stop}\n"
+	echo   "usage{check|start|stop|restart}\n"
 }
 #主程序入口
 if [[ -n $1 ]]; then
@@ -86,7 +86,9 @@ if [[ -n $1 ]]; then
 			;;
 		"stop")
 			control_all stop
-			;;	
+			;;
+		"restart")
+			control_all stop && control_all start	
 		*)
 			help
 			;;
