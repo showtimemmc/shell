@@ -4,7 +4,7 @@ CONTROL_SCRIPTS=("lighttpd_control" "mysql_control" "nmqproxy_control" "pusher_c
 #检查某一个服务是否启动
 function check_service()
 {
-	local len=$(ps -ef | grep $1 | egrep -v "grep|statusdetect.sh" | wc -l)
+	local len=$(ps -ef | grep $1 | egrep -v "grep|$0" | wc -l)
 	if [ $len == 0 ]; then
 		echo "$1 doesn't start"
 	else
@@ -17,6 +17,9 @@ function nmqproxy_control()
 	cd /home/work/nmq/nmqproxy/bin
 	echo $1
 	sh nmqproxy_control $1
+	if [[ $? -ne 0 ]]; then
+		echo "$1 nmqproxy failed"
+	fi
 }
 #params: start|stop
 function pusher_control()
@@ -24,6 +27,9 @@ function pusher_control()
 	cd /home/work/nmq/pusher/bin
 	echo $1
 	sh pusher_control $1
+	if [[ $? -ne 0 ]]; then
+		echo "$1 pusher failed"
+	fi
 }
 #params: start|stop
 function topic_control()
@@ -31,6 +37,9 @@ function topic_control()
 	cd /home/work/nmq/topic/bin
 	echo $1
 	sh topic_control $1
+	if [[ $? -ne 0 ]]; then
+		echo "$1 topic failed"
+	fi
 }
 #params: start|stop
 function nginx_control()
@@ -38,22 +47,32 @@ function nginx_control()
 	cd /home/work/nginx/bin/
 	if [ $1 == "start" ]; then
 		./nginx
+	elif [ $1 == "reload" ]; then
+		./nginx -s reload
 	else
 		./nginx -s stop
 	fi
-	
+	if [[ $? -ne 0 ]]; then
+		echo "$1 nginx failed"
+	fi
 }
 #params: start|stop
 function lighttpd_control()
 {
 	cd /home/work/orp/webserver/bin
 	sh lighttpd.sh $1
+	if [[ $? -ne 0 ]]; then
+		echo "$1 lighttpd failed"
+	fi
 }
 #params: start|stop
 function php_control()
 {
 	cd /home/work/orp/php/sbin
 	sh php-fpm $1
+	if [[ $? -ne 0 ]]; then
+		echo "$1 php-fpm failed"
+	fi
 }
 function check_all()
 {
