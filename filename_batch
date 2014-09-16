@@ -2,15 +2,35 @@
 #文件名批处理工具
 #TARGET_DIR:待处理文件所在目录
 #TARGET_STRING:文件名中去掉的部分
-#TODO:完善help；必要的错误处理；参数顺序之间的解偶;批量添加文件名
+#TODO:完善help；参数顺序之间的解偶
+#BUGFIX:文件名中有空格时会导致文件名处理失败
 help()
 {
 	echo "usage change_name [-h|-f]"
 }
+#获取要处理文件名的数组
+get_files()
+{
+	if [ -z $TARGET_DIR ]; then
+		echo "Miss TARGET_DIR"
+		exit 1
+	fi
+	cd $TARGET_DIR 
+	old_files=$(ls -F | grep -v / | grep $TARGET_STRING)
+	echo $old_files
+}
+
+add_filename()
+{
+	get_files
+	for file in $old_files
+	do
+		mv $file ${file}$TARGET_STRING
+	done
+}
 truncate_filename()
 {
-	cd $TARGET_DIR 
-	old_files=$(ls)
+	get_files
 	for file in $old_files 
 	do
 		new_filename=$(echo $file | sed "s/.$TARGET_STRING//g")
@@ -19,20 +39,29 @@ truncate_filename()
 	
 }
 
-while  getopts :htg:s: OPT
+
+
+while  getopts :htag:s: OPT
 do
 	case $OPT in
 		"h")
 		help
 		;;
 		"g")
+		if [ ! -d $TARGET_DIR ]; then
+			echo "TARGET_DIR  ERROR"
+			exit 1
+		fi
 		TARGET_DIR=$OPTARG
 		;;
 		"s")
 		TARGET_STRING=$OPTARG
 		;;
 		"t")
-		truncate_filename 
+		truncate_filename
+		;;
+		"a")
+		add_filename 
 		;;
 		"?")
 		echo "unknow option"
@@ -40,3 +69,4 @@ do
 		;;
 	esac
 done
+exit 0
