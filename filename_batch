@@ -1,0 +1,42 @@
+#!/bin/bash
+#文件名批处理工具
+#TARGET_DIR:待处理文件所在目录
+#TARGET_STRING:文件名中去掉的部分
+#TODO:完善help；必要的错误处理；参数顺序之间的解偶;批量添加文件名
+help()
+{
+	echo "usage change_name [-h|-f]"
+}
+truncate_filename()
+{
+	cd $TARGET_DIR 
+	old_files=$(ls)
+	for file in $old_files 
+	do
+		new_filename=$(echo $file | sed "s/.$TARGET_STRING//g")
+		mv $file $new_filename
+	done
+	
+}
+
+while  getopts :htg:s: OPT
+do
+	case $OPT in
+		"h")
+		help
+		;;
+		"g")
+		TARGET_DIR=$OPTARG
+		;;
+		"s")
+		TARGET_STRING=$OPTARG
+		;;
+		"t")
+		truncate_filename 
+		;;
+		"?")
+		echo "unknow option"
+		exit 1
+		;;
+	esac
+done
