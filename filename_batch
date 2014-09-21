@@ -6,7 +6,7 @@
 #BUGFIX:文件名中有空格时会导致文件名处理失败
 help()
 {
-	echo "usage change_name [-h|-f]"
+	echo "usage filename_batch [-g] targetdir [-s] filenamestring [-at]"
 }
 #获取要处理文件名的数组
 get_files()
